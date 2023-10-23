@@ -22,10 +22,11 @@ model.setObjective(objective, GRB.MINIMIZE)
 #Restricciones
 
 #1 Volumen max que recibe el punto de reciclaje segun los requerimientos del area que abarca el punto de reciclaje debe de ser respetado
-model.addConstrs()
+model.addConstrs(cv[p,z,d] <= volumen_max_por_punto_dispo for p in Puntos_Dispo for z in Zonas for d in Dias)
 
 #2 Restriccion inventario de los puntos
-model.addConstrs()
+model.addConstrs(cv[p,z,0] == 0 for p in Puntos_Dispo for z in Zonas)
+model.addConstrs(quicksum(cv[p,z,d] for p in Puntos_Dispo for z in Zonas) == quicksum(cv[p,z,(d-1)] for p in Puntos_Dispo for z in Zonas) + quicksum(demanda_diaria_volumen_por_zona_dia[z,d] for z in Zonas) - quicksum(ev[t,z,d] for t in Puntos_Extra for z in Zonas) - quicksum(rv[a,d] for a in Camiones) for d in range(1,7))
 
 #3 Se satisface la demanda de requerimiento de reciclaje por zona.
 model.addConstrs()
