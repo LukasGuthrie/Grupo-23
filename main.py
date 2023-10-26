@@ -55,3 +55,5 @@ model.addConstrs(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas 
 
 
 model.optimize()
+valor_objetivo = model.ObjVal
+print(f' Los costos operativos resultantes son {round(valor_objetivo,0)} pesos')
