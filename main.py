@@ -6,11 +6,11 @@ model = Model()
 
 #Variables
 
-cv = model.addVars(Puntos_Dispo, Zonas, Dias, vtype = GRB.continuous) #, name = 'cv_p,z,d'
-rv = model.addVars(Camiones, Dias, vtype = GRB.continuous) #, name = 'rv_a,d'
-ev = model.addVars(Puntos_Extra, Zonas, Dias, vtype = GRB.continuous) #, name = 'ev_t,z,d'
-e = model.addVars(Zonas, Dias, vtype = GRB.continuous) #, name = 'e_z,d'
-rn = model.addVars(Dias, vtype = GRB.continuous) #, name = 'rn_d'
+cv = model.addVars(Puntos_Dispo, Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'cv_p,z,d'
+rv = model.addVars(Camiones, Dias, vtype = GRB.CONTINUOUS) #, name = 'rv_a,d'
+ev = model.addVars(Puntos_Extra, Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'ev_t,z,d'
+e = model.addVars(Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'e_z,d'
+rn = model.addVars(Dias, vtype = GRB.CONTINUOUS) #, name = 'rn_d'
 
 model.update()
 
@@ -29,7 +29,7 @@ model.addConstrs(cv[p,z,0] == 0 for p in Puntos_Dispo for z in Zonas)
 model.addConstrs(quicksum(cv[p,z,d] for p in Puntos_Dispo for z in Zonas) == quicksum(cv[p,z,(d-1)] for p in Puntos_Dispo for z in Zonas) + quicksum(demanda_diaria_volumen_por_zona_dia[z,d] for z in Zonas) - quicksum(ev[t,z,d] for t in Puntos_Extra for z in Zonas) - quicksum(rv[a,d] for a in Camiones) for d in range(1,7))
 
 #3 Se satisface la demanda de requerimiento de reciclaje por zona.
-model.addConstrs(quicksum(demanda_diaria_volumen_por_zona_dia[z,d] for z in Zonas) <= quicksum(cv[p,z,d] for p in Puntos_Dispo) + quicksum(ev[t,z,d] for t in Puntos_Extra) for z in Zonas for d in Dias)
+model.addConstrs(quicksum(demanda_diaria_volumen_por_zona_dia[z,d] for z in Zonas) >= quicksum(cv[p,z,d] for p in Puntos_Dispo) + quicksum(ev[t,z,d] for t in Puntos_Extra) for z in Zonas for d in Dias)
 
 #4 Los puntos de reciclaje extra anadidos siguen los requerimientos de que el area que abarca el punto de reciclaje debe ser respetado.
 model.addConstrs(ev[t,z,d] <= volumen_max_por_punto_extra for t in Puntos_Extra for z in Zonas for d in Dias)
@@ -47,13 +47,14 @@ model.addConstrs(rv[a,d] <= volumen_max_camion for a in Camiones for d in Dias)
 model.addConstrs(rn[d] <= len(Camiones) for d in Dias)
 
 #9 Los puntos de reciclaje extra no pueden superar el n´umero de puntos extra disponibles para el despliegue.
-model.addConstrs(quicksum(e[z,d] for z in Zonas) for d in Dias)
+model.addConstrs(quicksum(e[z,d] for z in Zonas) <= len(Puntos_Extra) for d in Dias)
 
 #10 No se debe sobrepasar el presupuesto asignado por la municipalidad para los puntos de reciclaje extra.
-model.addConstrs(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas for d in Dias) <= presupuesto_municipalidad_puntos_extra)
-model.addConstrs(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas for d in Dias) >= 0)
+model.addConstr(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas for d in Dias) <= presupuesto_municipalidad_puntos_extra)
+model.addConstr(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas for d in Dias) >= 0)
 
 
 model.optimize()
-valor_objetivo = model.ObjVal
-print(f' Los costos operativos resultantes son {round(valor_objetivo,0)} pesos')
+print(model.ObjVal)
+
+print(f' Los costos operativos resultantes son {round(model.ObjVal/(10**10),0)} pesos')
