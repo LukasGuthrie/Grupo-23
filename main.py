@@ -9,14 +9,14 @@ model = Model()
 cv = model.addVars(Puntos_Dispo, Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'cv_p,z,d'
 rv = model.addVars(Camiones, Dias, vtype = GRB.CONTINUOUS) #, name = 'rv_a,d'
 ev = model.addVars(Puntos_Extra, Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'ev_t,z,d'
-e = model.addVars(Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'e_z,d'
-rn = model.addVars(Dias, vtype = GRB.CONTINUOUS) #, name = 'rn_d'
+e = model.addVars(Zonas, Dias, vtype = GRB.INTEGER) #, name = 'e_z,d'
+rn = model.addVars(Dias, vtype = GRB.INTEGER) #, name = 'rn_d'
 
 model.update()
 
 #Funcion Objetivo
 
-objective = quicksum(rn[d] for d in Dias) + quicksum(e[z,d] for z in Zonas for d in Dias)
+objective = quicksum(costo_utilizacion_camion * rn[d] for d in Dias) + quicksum(costo_utilizacion_punto_extra *e[z,d] for z in Zonas for d in Dias)
 model.setObjective(objective, GRB.MINIMIZE)
 
 #Restricciones
@@ -56,35 +56,35 @@ model.addConstr(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas f
 
 model.optimize()
 print(model.ObjVal)
-print(f' Los costos operativos resultantes son {round(model.ObjVal / 10**10,0)} pesos')
+print(f' Los costos operativos resultantes son {round(model.ObjVal,0)} pesos')
 
 with open('resultados/resultados_cv.csv', 'w') as archivo:
     archivo.write('Variable cv: p, z, d')
     for p in Puntos_Dispo:
         for z in Zonas:
             for d in Dias:
-                archivo.write(f' \n{int(cv[p , z, d].x)}, {p}, {z}, {d}')
+                archivo.write(f' \n{float(cv[p , z, d].x)}, {p}, {z}, {d}')
 
 with open('resultados/resultados_rv.csv', 'w') as archivo:
     archivo.write('Variable rv: a, d')
     for a in Camiones:
         for d in Dias:
-            archivo.write(f' \n{int(rv[a, d].x)}, {a}, {d}')
+            archivo.write(f' \n{float(rv[a, d].x)}, {a}, {d}')
 
 with open('resultados/resultados_ev.csv', 'w') as archivo:
     archivo.write('Variable ev: t, z, d')
     for t in Puntos_Extra:
         for z in Zonas:
             for d in Dias:
-                archivo.write(f' \n{int(ev[t , z, d].x)}, {t}, {z}, {d}')
+                archivo.write(f' \n{float(ev[t , z, d].x)}, {t}, {z}, {d}')
 
-with open('resultados/resultados_rv.csv', 'w') as archivo:
+with open('resultados/resultados_e.csv', 'w') as archivo:
     archivo.write('Variable e: z, d')
     for z in Zonas:
         for d in Dias:
-            archivo.write(f' \n{int(rv[z, d].x)}, {z}, {d}')
+            archivo.write(f' \n{float(e[z, d].x)}, {z}, {d}')
 
-with open('resultados/resultados_rv.csv', 'w') as archivo:
+with open('resultados/resultados_rn.csv', 'w') as archivo:
     archivo.write('Variable rn: d')
     for d in Dias:
-        archivo.write(f' \n{int(rv[d].x)}, {d}')
+        archivo.write(f' \n{float(rn[d].x)}, {d}')
