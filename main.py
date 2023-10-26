@@ -50,8 +50,8 @@ model.addConstrs(rn[d] <= len(Camiones) for d in Dias)
 model.addConstrs(quicksum(e[z,d] for z in Zonas) <= len(Puntos_Extra) for d in Dias)
 
 #10 No se debe sobrepasar el presupuesto asignado por la municipalidad para los puntos de reciclaje extra.
-model.addConstr(quicksum(costo_utilizacion_camion * rn[d] for d in Dias) <= presupuesto_municipalidad_puntos_extra)
-model.addConstr(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas for d in Dias) >= 0)
+model.addConstr(objective <= presupuesto_municipalidad_puntos_extra)
+model.addConstr(objective >= 0)
 
 
 model.optimize()
