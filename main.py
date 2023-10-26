@@ -56,5 +56,35 @@ model.addConstr(quicksum(costo_utilizacion_punto_extra * e[z,d] for z in Zonas f
 
 model.optimize()
 print(model.ObjVal)
+print(f' Los costos operativos resultantes son {round(model.ObjVal / 10**10,0)} pesos')
 
-print(f' Los costos operativos resultantes son {round(model.ObjVal/(10**10),0)} pesos')
+with open('resultados/resultados_cv.csv', 'w') as archivo:
+    archivo.write('Variable cv: p, z, d')
+    for p in Puntos_Dispo:
+        for z in Zonas:
+            for d in Dias:
+                archivo.write(f' \n{int(cv[p , z, d].x)}, {p}, {z}, {d}')
+
+with open('resultados/resultados_rv.csv', 'w') as archivo:
+    archivo.write('Variable rv: a, d')
+    for a in Camiones:
+        for d in Dias:
+            archivo.write(f' \n{int(rv[a, d].x)}, {a}, {d}')
+
+with open('resultados/resultados_ev.csv', 'w') as archivo:
+    archivo.write('Variable ev: t, z, d')
+    for t in Puntos_Extra:
+        for z in Zonas:
+            for d in Dias:
+                archivo.write(f' \n{int(ev[t , z, d].x)}, {t}, {z}, {d}')
+
+with open('resultados/resultados_rv.csv', 'w') as archivo:
+    archivo.write('Variable e: z, d')
+    for z in Zonas:
+        for d in Dias:
+            archivo.write(f' \n{int(rv[z, d].x)}, {z}, {d}')
+
+with open('resultados/resultados_rv.csv', 'w') as archivo:
+    archivo.write('Variable rn: d')
+    for d in Dias:
+        archivo.write(f' \n{int(rv[d].x)}, {d}')
