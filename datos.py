@@ -10,8 +10,8 @@ Camiones = range(8)
 
 #Parametros
 
-volumen_max_por_punto_dispo = 4
-volumen_max_por_punto_extra = 4
+volumen_max_por_punto_dispo = 4 # VCB
+volumen_max_por_punto_extra = 4 
 demanda_diaria_volumen_por_zona_dia = {
     (0, 0): 6.61,
     (0, 1): 6.61,
