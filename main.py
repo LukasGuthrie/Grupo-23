@@ -31,7 +31,7 @@ model.addConstrs(cv[p,z,0] == 0 for p in Puntos_Dispo for z in Zonas)
 model.addConstrs(quicksum(cv[p,z,d] for p in Puntos_Dispo for z in Zonas) == quicksum(cv[p,z,(d-1)] for p in Puntos_Dispo for z in Zonas) + quicksum(demanda_diaria_volumen_por_zona_dia[z,d] for z in Zonas) - quicksum(ev[t,z,d] for t in Puntos_Extra for z in Zonas) - quicksum(rv[a,d] for a in Camiones) for d in range(1,7))
 
 #3 Se satisface la demanda de requerimiento de reciclaje por zona.
-model.addConstrs(quicksum(demanda_diaria_volumen_por_zona_dia[z,d] for z in Zonas) >= quicksum(cv[p,z,d] for p in Puntos_Dispo) + quicksum(ev[t,z,d] for t in Puntos_Extra) for z in Zonas for d in Dias)
+model.addConstrs(demanda_diaria_volumen_por_zona_dia[z,d] >= quicksum(cv[p,z,d] for p in Puntos_Dispo) + quicksum(ev[t,z,d] for t in Puntos_Extra) for z in Zonas for d in Dias)
 
 #4 Los puntos de reciclaje extra anadidos siguen los requerimientos de que el area que abarca el punto de reciclaje debe ser respetado.
 model.addConstrs(ev[t,z,d] <= volumen_max_por_punto_extra for t in Puntos_Extra for z in Zonas for d in Dias)
