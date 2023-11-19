@@ -4,6 +4,8 @@ from datos import *
 
 model = Model()
 
+model.setParam("TimeLimit", 1800)
+
 #Variables
 
 cv = model.addVars(Puntos_Dispo, Zonas, Dias, vtype = GRB.CONTINUOUS) #, name = 'cv_p,z,d'
