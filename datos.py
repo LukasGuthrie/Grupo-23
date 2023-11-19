@@ -1,6 +1,6 @@
 from random import randint, uniform
 
-#Conjuntos
+#Conjuntos 
 Dias = range(8) # 0 (día anterior), 1 (lunes), 2, 3, 4, 5, 6, 7 (domingo)
 Puntos_Dispo = range(6)
 Puntos_Extra = range(3)

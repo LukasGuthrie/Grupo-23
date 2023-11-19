@@ -3,7 +3,6 @@ from random import randint
 from datos import *
 
 model = Model()
-
 model.setParam("TimeLimit", 1800)
 
 #Variables
