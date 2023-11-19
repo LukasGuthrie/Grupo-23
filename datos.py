@@ -1,17 +1,17 @@
 from random import randint, uniform
 
 #Conjuntos
-Dias = range(8)
+Dias = range(8) # 0 (día anterior), 1 (lunes), 2, 3, 4, 5, 6, 7 (domingo)
 Puntos_Dispo = range(6)
 Puntos_Extra = range(3)
-Zonas = range(5)
+Zonas = range(6) # 0, 1, 2, 3, 4, 5
 Camiones = range(20)
 
 
 #Parametros
 
-volumen_max_por_punto_dispo = 4
-volumen_max_por_punto_extra = 4
+volumen_max_por_punto_dispo = 4 # VCB
+volumen_max_por_punto_extra = 4 
 demanda_diaria_volumen_por_zona_dia = {
     (0, 0): 8.81,
     (0, 1): 8.81,
@@ -53,6 +53,14 @@ demanda_diaria_volumen_por_zona_dia = {
     (4, 5): 8.81,
     (4, 6): 8.81,
     (4, 7): 8.81,
+    (5, 0): 8.81,
+    (5, 1): 8.81,
+    (5, 2): 8.81,
+    (5, 3): 8.81,
+    (5, 4): 8.81,
+    (5, 5): 8.81,
+    (5, 6): 8.81,
+    (5, 7): 8.81,
 }
 costo_utilizacion_camion = 32550
 volumen_max_camion = 20
